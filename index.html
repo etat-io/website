@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="/css/pico.min.css"/>
+    <title>Etat.io</title>
+    <script type="text/javascript">
+      const totalTransaction = 42160861.382 / 1e3; // Milliard d'Euros in 2023 in France
+      const totalDepenseFrance = 1609.9; // Milliard d'Euros Dépense total Etat France : https://www.budget.gouv.fr/panorama-finances-publiques
+    </script>
+    <style>
+
+      @font-face {
+        font-family: 'Kalam';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/font/kalam.woff2") format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      .handwritten-text {
+        font-family: "Kalam";
+      }
+
+
+      :root {
+        --pico-mark-gradient: linear-gradient(to right, #d78dd2, #b999ee, #9da5e9, #8fa9f0);
+        --pico-border-radius:  0.7rem;
+      }
+      @media only screen and (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          --pico-muted-border-color: #373f4f;
+        }
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      mark {
+        padding: 0;
+        background: var(--pico-mark-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      h2 {
+        padding-top: 2em;
+      }
+
+      @media (min-width: 576px) {
+        h1 {
+          --pico-font-size: 2.5rem;
+          --pico-line-height: 1.0625;
+        }
+      }
+      @media (min-width: 1536px) {
+        h1 {
+          --pico-font-size: 3rem;
+          --pico-line-height: 1;
+        }
+      }
+
+
+      @media (min-width: 576px) {
+        h2 {
+          --pico-font-size: 2rem;
+          --pico-line-height: 1.125;
+        }
+      }
+      @media (min-width: 1536px) {
+        h2 {
+          --pico-font-size: 2.5rem;
+          --pico-line-height: 1.0625;
+        }
+      }
+      hgroup > h2 {
+        margin-bottom: calc(var(--pico-spacing)* 1);
+      }
+
+      @media (min-width: 768px) {
+        hgroup > h2 {
+          margin-bottom: calc(var(--pico-spacing) / 2);
+        }
+      }
+
+      hgroup {
+        margin-bottom: 2rem;
+      }
+
+      @media (min-width: 576px) {
+        .limit {
+          max-width: 510px;
+          padding-right: 0;
+          padding-left: 0;
+        }
+      }
+      @media (min-width: 768px) {
+        .limit {
+            max-width: 700px;
+        }
+      }
+      @media (min-width: 1024px) {
+        .limit {
+            max-width: 950px;
+        }
+      }
+      @media (min-width: 1280px) {
+        .limit {
+            max-width: 1200px;
+        }
+      }
+      .small {
+        font-size: 0.7em;
+      }
+      .center {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .space {
+        margin-top: 5rem;
+      }
+      .space2 {
+        margin-top: 10rem;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .text-right {
+        text-align: right
+      }
+      select.form-in-text, input:not([type=checkbox],[type=radio]).form-in-text {
+        margin-left: 7px;
+        margin-right: 7px;
+        margin-bottom: 3px;
+        padding: 2px var(--pico-form-element-spacing-horizontal);
+      }
+      @media (min-width: 768px) {
+        select.form-in-text, input:not([type=checkbox],[type=radio]).form-in-text {
+          padding: calc(var(--pico-form-element-spacing-vertical)/2) var(--pico-form-element-spacing-horizontal);
+        }
+      }
+
+
+      input:not([type=checkbox],[type=radio]).form-in-text {
+        height: inherit;
+      }
+      
+      .marker-yellow {
+        background-color: #74b9ff;
+        padding: 3px 8px;
+        border-radius: calc(var(--pico-border-radius)/2);
+        color: black;
+      }
+      .ctas {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+      }
+
+      /* Simulator */
+
+      #simulator label {
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+        font-size: 0.8em;
+        opacity: 0.5;
+        margin-right: 0.5em;
+      }
+      #simulator {
+        display: flex;
+        height: 250px;
+      }
+      #simulator ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        /*width: 200px;*/
+        min-width: 80px;
+        padding-left: 0.5em;
+        margin-bottom: 0;
+        font-size: 0.8em;
+      }
+      #simulator li {
+        list-style: none;
+        margin-bottom: 0;
+      }
+      #simulator input {
+        writing-mode: vertical-lr;
+        width: 1.25rem;
+        height: 250px;
+        margin-bottom: 0;
+      }
+      [type=range]::-webkit-slider-runnable-track {
+        height: 100%;
+        width: 0.375rem;
+      }
+      [type=range]::-moz-range-track {
+        height: 100%;
+        width: 0.375rem;
+      }
+      [type=range]::-ms-track {
+        height: 100%;
+        width: 0.375rem;
+      }
+      [type=range]::-webkit-slider-thumb {
+        margin-left: -0.4375rem;
+        background-color:  var(--pico-primary-background);
+      }
+      [type=range]::-moz-range-thumb {
+        margin-left: -0.4375rem;
+        background-color:  var(--pico-primary-background);
+      }
+      [type=range]::-ms-thumb {
+        margin-left: -0.4375rem;
+        background-color:  var(--pico-primary-background);
+      }
+      #simulator-result {
+        flex: 1;
+        font-size: 1.7em;
+        text-align: center;
+      }
+      #simulator-result-container {
+        background: #191f29;
+        border-radius: var(--pico-border-radius);
+        padding: 1em;
+      }
+      #simulator-result-container ul {
+        margin-top: 20px;
+        padding-inline-start: 15px;
+      }
+      #simulator-section > p {
+        line-height: 27px;
+      }
+      @media (min-width: 576px) {
+        #simulator-result {
+          font-size: 2em;
+        }
+      }
+      @media (min-width: 768px) {
+        #simulator-result {
+          font-size: 2em;
+        }
+        #simulator ul {
+          min-width: 150px;
+        }
+        #simulator-result-container ul {
+          padding-inline-start: 15px;
+        }
+      }
+      @media (min-width: 1024px) {
+        #simulator-result {
+          font-size: 5em;
+        }
+        #simulator ul {
+          min-width: 200px;
+        }
+        #simulator-result-container ul {
+          padding-inline-start: 40px;
+        }
+      }
+
+      /* Demo app */
+
+      .demo {
+        /*--pico-demo-border-gradient-colors: transparent 33%, #e9cbe8, #ddcef4, #d0d3f2, #cbd4f5; */
+        --pico-demo-border-gradient-colors: transparent 33%, #f585f2, #8637ff, #2639ff, #aebfff;
+        --demo-border-gradient: linear-gradient(0deg, var(--pico-demo-border-gradient-colors));
+        display: flex;
+        position: relative;
+        flex-direction: column;
+      }
+
+      .demo:before {
+        z-index: 0;
+        position: absolute;
+        inset: -3rem;
+        border-radius: var(--pico-border-radius);
+        background: var(--demo-border-gradient);
+        content: "";
+        filter: blur(3rem);
+        opacity: .25;
+        z-index: -100;
+      }
+      .demo:after {
+        z-index: -1;
+        position: absolute;
+        inset: -1px;
+        border-radius: var(--pico-border-radius);
+        background: var(--demo-border-gradient);
+        content: "";
+      }
+      .demo img {
+        border-radius: var(--pico-border-radius);
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 85%, rgba(0, 0, 0, 0) 100%);
+      }
+
+
+      /* TEMOIGNAGE */
+      #testimonial article {
+        margin-bottom: calc(var(--pico-block-spacing-vertical)*2);
+      }
+      #testimonial article > div > img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: var(--pico-border-radius);
+      }
+      #testimonial article > div {
+        font-size: 0.9em;
+      }
+      #testimonial article > div p {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+      }
+      #testimonial article > footer {
+        font-size: 0.7rem;
+        margin-top: calc(var(--pico-block-spacing-vertical)/4);
+      }
+      @media (min-width: 576px) {
+        #testimonial article > div > img {
+          object-fit: unset;
+          width: auto;
+          height: 250px;
+        }
+        #testimonial article > div {
+          display: flex;
+          column-gap: 1rem;
+        }
+        #testimonial article > div p {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+      }
+
+      /* FEATURE */
+      body>main {
+        --pico-homepage-spacing-vertical: calc(var(--pico-spacing)* 2.5);
+        --pico-homepage-spacing-horizontal: calc(var(--pico-spacing)* 3.5);
+        padding: 0;
+      }
+      @media (min-width: 576px) {
+        body>main {
+          --pico-homepage-spacing-vertical: calc(var(--pico-spacing)* 1);
+          --pico-homepage-spacing-horizontal: calc(var(--pico-spacing)* 4);
+        }
+      }
+      @media (min-width: 768px) {
+        body>main {
+          --pico-homepage-spacing-vertical: calc(var(--pico-spacing)* 4);
+          --pico-homepage-spacing-horizontal: calc(var(--pico-spacing)* 4.5);
+        }
+      }
+      @media (min-width: 1024px) {
+        body>main {
+          --pico-homepage-spacing-vertical: calc(var(--pico-spacing)* 4);
+          --pico-homepage-spacing-horizontal: calc(var(--pico-spacing)* 4);
+        }
+      }
+      @media (min-width: 1280px) {
+        body>main {
+          --pico-homepage-spacing-vertical: calc(var(--pico-spacing)* 5);
+          --pico-homepage-spacing-horizontal: calc(var(--pico-spacing)* 5);
+        }
+      }
+      #features article {
+        margin-bottom: 0;
+      }
+      #features > .grid {
+        -moz-column-gap: calc(var(--pico-homepage-spacing-horizontal) / 2);
+        column-gap: calc(var(--pico-homepage-spacing-horizontal) / 2);
+        row-gap: calc(var(--pico-homepage-spacing-vertical) / 2);
+      }
+      @media (min-width: 768px) {
+        #features > .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (min-width: 1024px) {
+        #features > .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+
+      /* FAQ */
+      #faq details p, #faq details ul, #faq details table {
+        font-size: 0.8em;
+      }
+      details summary {
+        transition: margin 250ms ease-out;
+      }
+
+
+
+      /* FOOTER */
+
+      body>footer .container section:first-of-type {
+        display: grid;
+        grid-template-areas:
+            "logo"
+            "links"
+            "resources"
+            "built";
+        -moz-column-gap: calc(var(--pico-spacing)* 2);
+        column-gap: calc(var(--pico-spacing)* 2);
+        row-gap: calc(var(--pico-spacing)* 2);
+        justify-content: stretch;
+        font-size: 14px;
+      }
+      @media (min-width: 768px) {
+        body>footer .container section:first-of-type {
+          grid-template-columns: auto 1fr;
+          grid-template-areas:
+          "logo links"
+          "built built"
+          "resources resources";
+          row-gap: calc(var(--pico-spacing)* 2);
+          justify-content: space-around;
+        }
+      }
+      @media (min-width: 1024px) {
+        body>footer .container section:first-of-type {
+          grid-template-columns: 1fr 2fr;
+          grid-template-areas:
+          "logo links"
+          "built links"
+          "resources links";
+          row-gap: var(--pico-spacing);
+        }
+      }
+      @media (min-width: 1280px) {
+        body>footer .container section:first-of-type {
+          -moz-column-gap: calc(var(--pico-spacing)* 4);
+          column-gap: calc(var(--pico-spacing)* 4);
+        }
+      }
+
+      body>footer .container section:first-of-type nav.links {
+          --pico-nav-element-spacing-vertical: .125rem;
+          --pico-nav-link-spacing-vertical: .125rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          -moz-column-gap: calc(var(--pico-spacing)* 3);
+          column-gap: calc(var(--pico-spacing)* 3);
+          row-gap: calc(var(--pico-spacing)* 2);
+          grid-area: links;
+          align-items: start;
+          width: -moz-fit-content;
+          width: fit-content;
+      }
+      @media (min-width: 576px) {
+          body>footer .container section:first-of-type nav.links {
+              -moz-column-gap: calc(var(--pico-spacing)* 6);
+              column-gap: calc(var(--pico-spacing)* 6);
+          }
+      }
+      @media (min-width: 768px) {
+          body>footer .container section:first-of-type nav.links {
+              grid-template-columns: 1fr 1fr 1fr;
+              -moz-column-gap: calc(var(--pico-spacing)* 2);
+              column-gap: calc(var(--pico-spacing)* 2);
+              justify-content: flex-end;
+              width: 100%;
+          }
+      }
+      @media (min-width: 1024px) {
+          body>footer .container section:first-of-type nav.links {
+              margin-left: auto;
+          }
+      }
+
+      @media (min-width: 1280px) {
+          body>footer .container section:first-of-type nav.links {
+              -moz-column-gap: calc(var(--pico-spacing)* 4);
+              column-gap: calc(var(--pico-spacing)* 4);
+              margin-left: auto;
+          }
+      }
+
+
+      body>footer .container section:first-of-type .etat-icon {
+          grid-area: logo;
+      }
+
+      body>footer .container section:first-of-type nav.links ul {
+          display: grid;
+          margin-inline: calc(var(--pico-nav-element-spacing-horizontal)* -1);
+      }
+      nav ol:first-of-type, nav ul:first-of-type {
+          margin-left: calc(var(--pico-nav-element-spacing-horizontal)* -1);
+      }
+
+      body>footer .container section:first-of-type p.build-info {
+          grid-area: built;
+          margin-bottom: 0;
+          color: var(--pico-muted-color);
+          text-wrap: balance;
+      }
+
+      body>footer .container section:first-of-type ul.resources {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          -moz-column-gap: calc(var(--pico-spacing) / 2);
+          column-gap: calc(var(--pico-spacing) / 2);
+          grid-area: resources;
+          width: -moz-fit-content;
+          width: fit-content;
+          margin-bottom: 0;
+          padding: 0;
+      }
+
+      body>footer .container section:last-of-type {
+          margin-block: calc(var(--pico-spacing)* 2);
+          padding-top: calc(var(--pico-spacing)* 2);
+          border-top: var(--pico-border-width) solid var(--pico-muted-border-color);
+          font-size: 12px;
+      }
+      body>footer .container section:first-of-type ul.resources li {
+          margin: 0;
+          list-style: none;
+      }
+
+      .article-gradient-light {
+        /*background-image: radial-gradient(circle at top left, rgba(255, 244, 244, .15), transparent 40%);*/
+        background-image: radial-gradient(circle at top left, rgb(167 148 255 / 15%), #6d4d7e21 40%);
+      }
+      .article-gradient {
+        background-image: radial-gradient(circle at top left, rgb(169 151 251 / 29%), #3a2d4121 40%);
+      }
+      .article-gradient p, .article-gradient ul {
+        font-size: 0.9em;
+      }
+
+      /* fireworks */
+      .pyro>.after,.pyro>.before{position:fixed;width:5px;height:5px;border-radius:50%;box-shadow:-120px -218.66667px #00f,248px -16.66667px #00ff84,190px 16.33333px #002bff,-113px -308.66667px #ff009d,-109px -287.66667px #ffb300,-50px -313.66667px #ff006e,226px -31.66667px #ff4000,180px -351.66667px #ff00d0,-12px -338.66667px #00f6ff,220px -388.66667px #9f0,-69px -27.66667px #ff0400,-111px -339.66667px #6200ff,155px -237.66667px #0df,-152px -380.66667px #00ffd0,-50px -37.66667px #0fd,-95px -175.66667px #a6ff00,-88px 10.33333px #0d00ff,112px -309.66667px #005eff,69px -415.66667px #ff00a6,168px -100.66667px #ff004c,-244px 24.33333px #f60,97px -325.66667px #f06,-211px -182.66667px #00ffa2,236px -126.66667px #b700ff,140px -196.66667px #9000ff,125px -175.66667px #0bf,118px -381.66667px #ff002f,144px -111.66667px #ffae00,36px -78.66667px #f600ff,-63px -196.66667px #c800ff,-218px -227.66667px #d4ff00,-134px -377.66667px #ea00ff,-36px -412.66667px #ff00d4,209px -106.66667px #00fff2,91px -278.66667px #000dff,-22px -191.66667px #9dff00,139px -392.66667px #a6ff00,56px -2.66667px #09f,-156px -276.66667px #ea00ff,-163px -233.66667px #00fffb,-238px -346.66667px #00ff73,62px -363.66667px #08f,244px -170.66667px #0062ff,224px -142.66667px #b300ff,141px -208.66667px #9000ff,211px -285.66667px #f60,181px -128.66667px #1e00ff,90px -123.66667px #c800ff,189px 70.33333px #00ffc8,-18px -383.66667px #0f3,100px -6.66667px #ff008c;-moz-animation:1s ease-out infinite backwards bang,1s ease-in infinite backwards gravity,5s linear infinite backwards position;-webkit-animation:1s ease-out infinite backwards bang,1s ease-in infinite backwards gravity,5s linear infinite backwards position;-o-animation:1s ease-out infinite backwards bang,1s ease-in infinite backwards gravity,5s linear infinite backwards position;-ms-animation:1s bang ease-out infinite backwards,1s gravity ease-in infinite backwards,5s position linear infinite backwards;animation:1s ease-out infinite backwards bang,1s ease-in infinite backwards gravity,5s linear infinite backwards position}.pyro>.after{-moz-animation-delay:1.25s,1.25s,1.25s;-webkit-animation-delay:1.25s,1.25s,1.25s;-o-animation-delay:1.25s,1.25s,1.25s;-ms-animation-delay:1.25s,1.25s,1.25s;animation-delay:1.25s,1.25s,1.25s;-moz-animation-duration:1.25s,1.25s,6.25s;-webkit-animation-duration:1.25s,1.25s,6.25s;-o-animation-duration:1.25s,1.25s,6.25s;-ms-animation-duration:1.25s,1.25s,6.25s;animation-duration:1.25s,1.25s,6.25s}@-webkit-keyframes bang{from{box-shadow:0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff}}@-moz-keyframes bang{from{box-shadow:0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff}}@-o-keyframes bang{from{box-shadow:0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff}}@-ms-keyframes bang{from{box-shadow:0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff}}@keyframes bang{from{box-shadow:0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff,0 0 #fff}}@-webkit-keyframes gravity{to{transform:translateY(200px);-moz-transform:translateY(200px);-webkit-transform:translateY(200px);-o-transform:translateY(200px);-ms-transform:translateY(200px);opacity:0}}@-moz-keyframes gravity{to{transform:translateY(200px);-moz-transform:translateY(200px);-webkit-transform:translateY(200px);-o-transform:translateY(200px);-ms-transform:translateY(200px);opacity:0}}@-o-keyframes gravity{to{transform:translateY(200px);-moz-transform:translateY(200px);-webkit-transform:translateY(200px);-o-transform:translateY(200px);-ms-transform:translateY(200px);opacity:0}}@-ms-keyframes gravity{to{transform:translateY(200px);-moz-transform:translateY(200px);-webkit-transform:translateY(200px);-o-transform:translateY(200px);-ms-transform:translateY(200px);opacity:0}}@keyframes gravity{to{transform:translateY(200px);-moz-transform:translateY(200px);-webkit-transform:translateY(200px);-o-transform:translateY(200px);-ms-transform:translateY(200px);opacity:0}}@-webkit-keyframes position{0%,19.9%{margin-top:10%;margin-left:40%}20%,39.9%{margin-top:40%;margin-left:30%}40%,59.9%{margin-top:20%;margin-left:70%}60%,79.9%{margin-top:30%;margin-left:20%}80%,99.9%{margin-top:30%;margin-left:80%}}@-moz-keyframes position{0%,19.9%{margin-top:10%;margin-left:40%}20%,39.9%{margin-top:40%;margin-left:30%}40%,59.9%{margin-top:20%;margin-left:70%}60%,79.9%{margin-top:30%;margin-left:20%}80%,99.9%{margin-top:30%;margin-left:80%}}@-o-keyframes position{0%,19.9%{margin-top:10%;margin-left:40%}20%,39.9%{margin-top:40%;margin-left:30%}40%,59.9%{margin-top:20%;margin-left:70%}60%,79.9%{margin-top:30%;margin-left:20%}80%,99.9%{margin-top:30%;margin-left:80%}}@-ms-keyframes position{0%,19.9%{margin-top:10%;margin-left:40%}20%,39.9%{margin-top:40%;margin-left:30%}40%,59.9%{margin-top:20%;margin-left:70%}60%,79.9%{margin-top:30%;margin-left:20%}80%,99.9%{margin-top:30%;margin-left:80%}}@keyframes position{0%,19.9%{margin-top:10%;margin-left:40%}20%,39.9%{margin-top:40%;margin-left:30%}40%,59.9%{margin-top:20%;margin-left:70%}60%,79.9%{margin-top:30%;margin-left:20%}80%,99.9%{margin-top:30%;margin-left:80%}}
+      #fireworks {
+        display: none;
+      }
+
+
+      .world-back {
+        background-image: url("/img/world.svg");
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+      #world {
+        /* height: 600px; */
+        height: 250px;
+      }
+      @media (min-width: 576px) {
+        #world {
+          height: 250px;
+        }
+      }
+      @media (min-width: 768px) {
+        #world {
+          height: 400px;
+        }
+      }
+      @media (min-width: 1280px) {
+        #world {
+          height: 600px;
+        }
+      }
+
+      [data-tooltip]:focus::after, [data-tooltip]:focus::before, [data-tooltip]:hover::after, [data-tooltip]:hover::before {
+        white-space: pre-wrap; /* force wrap for smartphone */
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="fireworks" class="pyro">
+      <div class="before"></div>
+      <div class="after"></div>
+    </div>
+
+    <main class="container">
+      <nav>
+        <ul>
+          <li><i><img src="/img/logo-white.svg" alt="logo etat" style="height: 35px;"></i></li>
+        </ul>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#about">A propos</a></li>
+        </ul>
+      </nav>
+      <section class="limit center text-center space">
+        <div class="hook">
+          <h1>
+            <mark>Remplacer tous vos impôts et taxes&nbsp;</mark>
+            <br>par <u>une unique</u> taxe de <span class="tu">2,5</span> %
+          </h1>
+          <p class="secondary">
+            <br>Augmenter le pouvoir d'achat de vos citoyens, Simplifier la vie de vos entreprises,
+            <br>Et Supprimer vos déficites grace à la Taxe Universelle (T.U) sur les transactions bancaires
+          </p>
+          <div class="grid ctas">
+            <a role="button" href="#simulator-section">
+                Essayez gratuitement
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/></svg>
+            </a>
+            <a role="button" class="contrast" href="#features">
+                Avantages
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/></svg>
+             </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="limit center space2" id="simulator-section">
+        <h2><mark>Collecter</mark> les impôts simplement</h2>
+        <p>Je suis 
+          <select class="form-in-text" name="favorite-cuisine" aria-label="Sélectionnez votre pays" required style="width:200px;">
+            <option selected>la France</option>
+            <option>Un autre pays</option>
+          </select>
+          et je collecte <input class="form-in-text tu" type="number" name="number" placeholder="Number" aria-label="Number" value="2.5" disabled style="width: 110px;"> % sur toutes les transactions bancaires de mon pays pour financer toutes les dépenses publiques et, accessoirement, résorber mon déficit 😛.
+        </p>
+        <div style="display: flex; margin-top:2em">
+          <div id="simulator">
+            <label  for="tu">
+              Taxe Universelle (T.U.)
+            </label>
+            <input id="tu" type="range" list="values" class="vertical" min="0" max="6" step="0.01" />
+            <ul class="handwritten-text">
+              <li>Pourri-gâté</li>
+              <li>Equilibre</li>
+              <li>Faillite</li>
+            </ul>
+          </div>
+          <div id="simulator-result-container">
+            <mark id="simulator-result">
+              1500
+            </mark>
+            <mark> par an</mark>
+            <p class="small" style="margin-top: 1rem; line-height: 0.1em;">
+              Sources : 
+              <ul class="small">
+                <li><a href="https://data.ecb.europa.eu/data/datasets/PAY/PAY.A.FR.W0.TOTL.2._Z.N.EUR" target="_blank">Transactions bancaires en 2023</a></li>
+                <li><a href="https://www.budget.gouv.fr/panorama-finances-publiques" target="_blank">Dépenses en 2023</a></li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="limit center space2" id="features">
+        <hgroup>
+          <h2>
+            <mark>Simplifier</mark> tout, <mark>Libérer</mark> vos citoyens
+          </h2>
+          <p>Votre État est devenu lent, lourd et complexe avec 450 impôts, taxes et autant de niches fiscales ? Alors, il est temps de mettre en place la Taxe Universelle (T.U.) pour simplifier profondément la vie de vos citoyens et entreprises.</p>
+        </hgroup>
+        <div class="grid">
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="M312-320h64l32-92h146l32 92h62L512-680h-64L312-320Zm114-144 52-150h4l52 150H426Zm54 384q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+              Automatiser tout
+            </h3>
+            <p>Les banques collectent automatiquement la Taxe Universelle à chaque transaction pour le compte de l'État.</p>
+            <p>Imaginez le gain de temps : suppression des déclarations d'impôts, des déclarations de patrimoine, du calcul de la TVA, etc.</p>
+          </article>
+
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+              Réduiser vos coûts
+            </h3>
+            <p>En France, la collecte des impôts coûte environ 5 milliards d'euros par an. Plus de 120 000 fonctionnaires sont dédiés à cette tâche.</p>
+            <p>La Taxe Universelle, collectée de manière informatique et systématique à chaque transaction bancaire, supprime ce coût de fonctionnement.</p>
+          </article>
+
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/></svg>
+              Éradiquer les fraudes
+            </h3>
+            <p>Il devient impossible de frauder en omettant de déclarer un patrimoine, une TVA (<a href="https://ec.europa.eu/commission/presscorner/detail/fr/ip_19_5511" target="_blank"> 137 Milliards de fraude</a>), un impôt sur les bénéfices, etc., car la taxe est collectée à chaque transfert d'argent.</p>
+            <p>La Taxe Universelle est tellement faible que la tentation de transférer l'argent en espèces (marché noir) diminue.</p>
+          </article>
+
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="M600-120q-118 0-210-67T260-360H120v-80h122q-3-24-2.5-44.5T242-520H120v-80h140q38-106 130-173t210-67q69 0 130.5 24.5T840-748l-57 56q-37-32-83.5-50T600-760q-85 0-152 44.5T347-600h253v80H323q-4 27-3 47.5t3 32.5h277v80H347q34 71 101 115.5T600-200q53 0 99.5-18t83.5-50l57 56q-48 43-109.5 67.5T600-120Z"/></svg>
+              Libérer le pouvoir d'achat
+            </h3>
+            <ul>
+              <li>Salaire brut - <span class="tu">2,5</span>% = Salaire net</li>
+              <li>La TVA de 20 % est remplacée par la Taxe Universelle de <span class="tu">2,5</span>%</li>
+              <li>L'impôt sur la transmission de patrimoine passe de 40% environ à <span class="tu">2,5</span>%</li>
+            </ul>
+          </article>
+
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z"/></svg>
+              Booster vos entreprises
+            </h3>
+            <p>La Taxe Universelle remplace tous les impôts actuels, et aucune déclaration n'est nécessaire (TVA, URSSAF, IS, IR, CFE, etc.).</p>
+            <p>La simplification, la stabilité fiscale, et la réduction massive des impôts rendront vos entreprises ultra-compétitives et efficaces.</p>
+          </article>
+
+
+          <article class="article-gradient">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#dba1ff"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q54 0 104-17.5t92-50.5L228-676q-33 42-50.5 92T160-480q0 134 93 227t227 93Zm252-124q33-42 50.5-92T800-480q0-134-93-227t-227-93q-54 0-104 17.5T284-732l448 448Z"/></svg>
+              Zéro niches fiscales
+            </h3>
+            <p>Plus besoin d'experts et conseillers en patrimoine pour réduire les impôts avec des montages complexes (holding, donation en nue-propriété, etc.).</p>
+            <p>Les entreprises étrangères ne peuvent pas échapper à la Taxe Universelle, et elles voudront toutes venir dans votre pays !</p>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="limit center space2" id="depense-recette">
+        <hgroup class="text-right">
+          <h2>Restaurer la <mark>confiance</mark> avec vos citoyens</h2>
+          <p>
+            L'argent public est un bien commun précieux.
+            <br>
+            La transparence est un levier essentiel pour inciter à la frugalité.
+            <br>
+            À l'inverse, valorisez ceux qui contribuent le plus, s'ils le souhaitent.
+          </p>
+        </hgroup>
+        <div class="grid">
+          <div class="demo">
+            <img src="/img/depense.webp" alt="depense">
+          </div>
+          <div class="demo">
+            <img src="/img/recette.webp" alt="recette">
+          </div>
+        </div>
+      </section>
+
+
+      <section class="limit center space2" id="configure-impot">
+        <hgroup>
+          <h2><mark>Redonner</mark> une part de <mark>pouvoir</mark> à vos citoyens</h2>
+          <p>
+            Les contribuables peuvent rediriger une part de leur impôt (ou plus) directement
+            vers l'association ou le service public de leur choix.
+            <br>
+            Et arrêter d'offrir des réductions d'impôts en échange des dons. Pourquoi faire compliqué ?
+          </p>
+        </hgroup>
+          <div class="demo" style="max-width: 550px;">
+            <img src="/img/configure.webp" alt="depense">
+          </div>
+      </section>
+
+
+      <section class="limit center space2" id="testimonial">
+        
+        <hgroup class="text-center">
+          <h2>Témoignages Plausibles</h2>
+          <p>Ces personnes pourraient exister dans un pays utilisant ETAT.io</p>
+        </hgroup>
+
+        <article>
+          <div>
+            <img src="/img/jean-dominique.webp" alt="Jean dominique">
+            <p>
+              <sub><span style="font-size:2em; font-weight: bold;">”</span> </sub> Je paie beaucoup moins d'impôts, et le prix du litre de diesel est enfin redevenu raisonnable, en dessous de 1 euro !
+              <br>
+              La nouvelle fiscalité, c'est quelque chose ! Elle est tellement simple, douce et prévisible que cela me permet de vivre dignement de ma passion.
+              <br><br>Malgré le <em data-tooltip="Perte de clients (Jargon de startupeur)">churn</em> de 5% en 2024, mon revenu net a augmenté de 50% avec un seul point de vente de saucisses aux particules fines au rond-point de Pouzauges !
+              <br>
+              <br>
+              Merci État.io d'avoir transformé mon pays ❤️🙏
+            </p>
+          </div>
+          <footer>Jean-Dominique - Early-stage Investor, Ex-GiletJaune, Ex-CGT.</footer>
+        </article>
+
+        <article>
+          <div>
+            <img src="/img/caroline.webp" alt="Caroline">
+            <p>
+              <sub><span style="font-size:2em; font-weight: bold;">”</span></sub>
+              Après de nombreux arrêts de travail pour burn-out, je revis et je me suis enfin réconcilié avec mon patron !
+              <br>
+              <br>
+              Mon employeur a recruté 20 % de personnes en plus grâce à la suppression des charges salariales.
+              <br>
+              La pression a diminué et nous sommes passés à la semaine de quatre jours. Je passe beaucoup plus de temps avec mes enfants.
+              <br>
+              <br>
+              Merci État.io d'avoir changé ma vie 🥰
+            </p>
+          </div>
+          <footer>Caroline - co-CFO, co-CTO, Conférencière, Responsable du bonheur chez Boogle.</footer>
+        </article>
+
+        <article>
+          <div>
+            <img src="/img/nicolas.webp" alt="Nicolas">
+            <p>
+              <sub><span style="font-size:2em; font-weight: bold;">”</span></sub>
+              Toute l'année, j'arrive à payer entièrement ma nourriture et mes sorties avec mes indemnités de stage et mes petits boulots !
+              <br>
+              <br>
+              C'est une dinguerie : la place de cinéma est retombée à 7 euros, le Big Mac à 4 euros !
+              <br>
+              <br>
+              En plus, je peux reverser une part de la Taxe Universelle (T.U) directement à mon club de basket de La Chaize-Giraud depuis mon smartphone🤘.
+            </p>
+          </div>
+          <footer>Nicolas - Étudiant, Végan, Influenceur, rapatrié trois fois en hélico depuis l’Everest à cause d’un manque de vitamine B12.</footer>
+        </article>
+
+      </section>
+
+
+      <section class="limit center space2" id="faq">
+        <h2 >Foire aux questions</h2>
+       
+        <details>
+          <summary>Est-ce que ce site est une blague ?</summary>
+          <p>
+            Oui et non.
+            <br>
+            Le sujet est traité avec humour. Cela dit, les montants pouvant être récoltés via les transactions bancaires sont réels.
+            <br>
+            Cela vous semble trop beau pour être vrai ? Moi aussi, je l'avoue. Alors, en bon scientifique dans l'âme, je me suis dit qu'il fallait publier.
+            <br>
+            C'est sûrement une idée farfelue, jusqu'à preuve du contraire. À vous de le dire.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Comment soutenir ce projet ?</summary>
+          <ul>
+            <li>Parlez-en autour de vous et sur les réseaux sociaux.</li>
+            <li>Abonnez-vous aux comptes X, LinkedIn, Discord, et suivez le projet sur GitHub. C'est notre seul indicateur de succès.</li>
+          </ul>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Est-ce porté par un parti politique ?</summary>
+          <p>
+            Non.
+            <br>
+            Il s'agit simplement d'une idée émanant de la société civile.
+            <br>
+            Elle n'appartient à aucun parti politique, et aucun parti ne devrait se l'approprier sans en citer la source.
+            <br>
+            Est-ce une idée de droite ? Est-ce une idée de gauche ? Cela n'a pas d'importance. L'objectif est de simplifier le fonctionnement des États pour le bien de tous.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Cette taxe peut-elle être considérée comme injuste ?</summary>
+          <p>
+            La taxe est en effet appliquée en <u>pourcentage</u> de manière <u>égalitaire</u> à l'ensemble des citoyens, des entreprises, des associations et même des escrocs !
+            <br><br>
+            Cependant, la <u>valeur prélevée</u> en euros est <u>proportionnelle</u> aux salaires, aux achats, aux dividendes, aux bénéfices, aux transmissions de patrimoine, etc.
+            Donc, "plus tu es riche, plus tu paies". Il n'y a aucun plafond et aucune astuce réservés aux connaisseurs pour échapper à la taxe.
+            <br><br>
+            Enfin, il est toujours possible de définir des règles sociales pour éviter l'injustice. Exemples :
+            <ul>
+              <li>Rendre obligatoire l'affichage public des écarts de salaire entre le minimum et le maximum dans toute entreprise et association (Théorie du nudge)</li>
+              <li>Augmenter le salaire minimum.</li>
+              <li>...</li>
+            </ul>
+          </p>
+        </details>
+        
+        <hr/>
+
+        <details>
+          <summary>Dois-je payer la taxe pour un transfert entre mes comptes personnels ou ceux de mon entreprise ?</summary>
+          <p>
+            Non.
+            <br>
+            La taxe est prélevée uniquement pour les échanges entre personnes physiques ou morales (entreprises, associations, ...).
+            La seule exception est lorsque l'un de vos comptes se situe en dehors des frontières du pays. Dans ce cas, la taxe s'applique.
+          </p>
+        </details>
+
+        
+        <hr/>
+
+        <details>
+          <summary>Cela remplace-t-il la TVA, l'impôt sur le revenu, les sociétés, les dividendes, les transmissions, taxe foncière, etc ?</summary>
+          <p>
+            Oui. Tous. Et c'est seulement <span class="tu">2,5</span> %. En France, cela remplacerait environ 450 taxes et impôts.
+            <br>
+            Tous les impôts actuels ne sont que des vases communicants. Lorsqu'un politicien promet une baisse d'un impôt, c'est qu'il augmente un autre impôt.
+            <br>
+            C'est l'activité économique du pays qui finance l'État et ses services publics. Alors, pourquoi ne pas taxer directement tous les échanges économiques ?
+            <br>
+            Ensuite, chaque État est libre d'investir dans les domaines qu'il souhaite, selon son modèle social (santé, retraite, éducation, chômage...).
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Que fait-on des taxes incitatives pour l'environnement et la biodoversité ?</summary>
+          <p>
+            Les crédits d'impôts, taxes écologiques, taxe carbone et primes sont souvent détournés de leurs objectifs initiaux ("Rewarding A while Hoping for B", Steven Kerr).
+            Par exemple, les primes pour voitures électriques permettent surtout aux vendeurs de maintenir des prix de vente très élevés, au lieu d'innover pour produire à faible coût !
+            <br>
+            <br>
+            Aussi, le va-et-vient de ces taxes et crédit d'impôts crée une instabilité économique, générant des « entreprises jetables » dont l'existence dépend uniquement de la politique du moment.
+            <br>
+            D'autres mesures (Théorie du nudge, mesures indirectes, etc) peuvent être appliquées :
+            <br>
+            <ul>
+              <li>Obliger tous les fabricants à rendre disponibles les pièces détachées pour faciliter la réparation.</li>
+              <li>La somme des prix de toutes les pièces détachées ne devrait jamais dépasser la valeur du produit neuf</li>
+              <li>Rendre les autoroutes et parkings gratuits pour les véhicules moins polluants et progressivement augmenter en fonction du parc de véhicules</li>
+              <li>Augmenter significativement le montant des amendes en cas d'infractions pour les conducteurs de véhicules lourds, puissants et polluants.</li>
+              <li>...</li>
+            </ul>
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>La taxe s'applique-t-elle lorsque je retire des espèces ?</summary>
+          <p>
+            Oui.
+            <br>
+            Pourquoi ? Parce que l'argent sort du système.
+            <br>
+            Cependant, pour éviter la double imposition, un dépôt d'espèces en banque n'est pas soumis à cette taxe, que ce soit pour les entreprises et les particuliers en dessous d'un certain montant par an à définir.
+            <br>
+            La Taxe Universelle  étant faible, l'argent circulant hors du système (marché noir) devrait mécaniquement diminuer.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>La taxe s'applique-t-elle lorsque je transmet un bien materiel (maison, oeuvre d'art, entreprise) ?</summary>
+          <p>
+            Oui, pour éviter que les biens matériels deviennent une monnaie d'échange non taxée.
+            <br>
+            La taxe doit être payée par le nouveau propriétaire dans les 3 ans suivant le transfert de propriété.
+            <br>
+            La collecte de la taxe peut se faire soit par la revente du bien lui-même (automatique), soit par un paiement effectué par le nouveau propriétaire s'il conserve le bien.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Qui paye la taxe dans les transferts bancaires, l'émetteur ou le receveur ?</summary>
+          <p>
+            La Taxe Universelle est payée par :
+            <br>
+            - Le destinataire, c'est-à-dire celui qui reçoit l'argent sur son compte, pour les échanges internes au pays et pour les fonds provenant de l'étranger.
+            <br>
+            - L'émetteur, c'est-à-dire celui qui envoie l'argent depuis son compte, pour les transferts d'argent vers l'étranger.
+            <br><br>
+            Par exemple, voici les opérations visibles sur chaque compte lors de l'achat d'un smartphone à 100 euros :
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction</th>
+                <th>Compte de l'Acheteur</th>
+                <th>Compte du Vendeur</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Transaction interne (acheteur interne vers vendeur interne)</td>
+                <td>-100 euros</td>
+                <td>+100 euros - <span class="tu">2,5</span> euros</td>
+              </tr>
+              <tr>
+                <td>Import (acheteur interne vers vendeur étranger)</td>
+                <td>-100 euros - <span class="tu">2,5</span> euros</td>
+                <td>+100 euros</td>
+              </tr>
+              <tr>
+                <td>Export (vendeur interne vers acheteur étranger)</td>
+                <td>-100 euros</td>
+                <td>+100 euros - <span class="tu">2,5</span> euros</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Ma holding devient-elle inutile ?</summary>
+          <p>
+            Techniquement, elle perd son intérêt principal lié au régime "mère-fille". Elle peut rester utile pour d'autres raisons, comme le regroupement d'actionnaires.
+            <br>
+            Une double imposition s'applique si des dividendes sont transférés à la holding, puis réinvestis dans une autre entreprise.
+            <br>
+            Cela dit, une double imposition de <span class="tu">2,5</span> % reste relativement faible et doit être mise en perspective avec les réductions d'impôt significatives sur le revenu, les dividendes et les bénéfices.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Que faire si le volume des échanges bancaires diminue lorsque la taxe est appliquée ?</summary>
+          <p>
+            Imaginons que la valeur totale des échanges bancaires soit divisée par deux : il suffirait alors de doubler la Taxe Universelle. Même en doublant la taxe, celle-ci resterait très faible comparée à l'ensemble des taxes et impôts collectés à ce jour.
+            <br>
+            De plus, d'autres phénomènes pourraient compenser cela : le pays devient un paradis fiscal, attirant de nombreuses entreprises et investisseurs, ce qui génèrera potentiellement davantage de production et flux financiers.
+            Aussi, la réduction des coûts de fonctionnement de l'État devrait permettre de diminuer le budget de l'État.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Est-ce que les jeux de hasard, assurances, prêts et intérêts sont taxés ?</summary>
+          <p>
+            Oui, c'est un transfert d'argent. La Taxe Universelle de <span class="tu">2,5</span>% s'applique, même pour les gains au LOTO.
+          </p>
+          <p>
+            Toutes les exonérations actuelles doivent être supprimées. Cette approche, simple et équitable, garantit le maintien d'un taux faible pour tous. Ainsi, chacun contribue aux paiements des services publics, sans exception.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Est-ce un retour en arrière si la T.V.A. est supprimée ?</summary>
+          <p>
+            La T.V.A. a été instaurée pour la première fois en France en 1954, puis adopté par 166 pays dans le monde. Elle a été mise en place pour éviter une imposition en cascade sur les différentes étapes d'une filière économique ou commerciale, contrairement à la taxe sur le chiffre d'affaires par exemple.
+          </p>
+          <p>
+            En effet, la T.V.A. est une taxe sur la valeur ajoutée, c'est-à-dire la valeur créée par l'entreprise après transformation de ses achats. 
+            Par exemple, une entreprise qui achète pour 100 € HT de matières premières et vend son produit final à 1 000 € HT paiera une taxe de 180 euros : (1 200 € TTC - 1 000 € HT) - (120 € TTC - 100 € HT).
+          </p>
+          <p>
+            La Taxe Universelle, en revanche, s'applique sur l'ensemble de la chaîne d'approvisionnement, et non uniquement sur la valeur ajoutée.
+            Dans l'exemple précédent, l'entreprise ne paierait que <span class="tu">2,5</span>% de taxe sur 1 000 € et éventuellement <span class="tu">2,5</span>% de taxe sur les 100 € de matières premières si le fournisseur fait payer la taxe à son client.
+          </p>
+          <p>
+            Autrement dit, les entreprises paieront moins de taxes qu'avec la T.V.A. si leur marge commerciale (la différence entre les ventes et le coût d'achat des marchandises) dépasse le taux de la Taxe Universelle à <span class="tu">2,5</span>%.
+            De plus, la Taxe Universelle supprime les mouvements de trésorerie inutiles ainsi que les coûts liés à la gestion et à la collecte de la T.V.A.
+          </p>
+        </details>
+
+        <hr/>
+
+        <details>
+          <summary>Tu rêves ? c'est impossible de mettre en place un tel système !</summary>
+          <p>
+            Nous sommes capables de poser des robots sur Mars, de fabriquer des bombes atomiques 😢 et de greffer un cœur.
+            <br>
+            Alors pourquoi ne serions-nous pas capables d'ajouter 10 lignes de code dans les banques pour prélever automatiquement une taxe universelle ? En plus, c'est un secteur déjà hyper sécurisé et informatisé.
+          </p>
+        </details>
+
+      </section>
+    
+
+
+      <section id="world" class="limit center text-center space2 world-back">
+        <h2>Soyez le <mark>1er</mark> pays à entrer dans <mark>l'Histoire</mark></h2>
+        <p>Réconciliez <span class="marker-yellow">service publique de qualité</span> et <span class="marker-yellow">paradis fiscal</span></p>
+      </section>
+
+
+      <section class="limit center space2" id="philo">
+        <h2>Notre philosophie</h2>
+        <blockquote>
+          “La perfection est atteinte, non pas lorsqu'il n'y a plus rien à ajouter, mais lorsqu'il n'y a plus rien à retirer”
+          <footer>
+            <cite>Antoine De Saint Exupery</cite>
+          </footer>
+        </blockquote>
+
+        <blockquote>
+          “La simplicité est la sophistication suprême”
+          <footer>
+            <cite>Leonard De Vinci</cite>
+          </footer>
+        </blockquote>
+
+        <blockquote>
+          “Tous les systèmes tendent à devenir lents, lourds et complexes, jusqu'à ce que des solutions rapides, légères et simples les remplacent”
+          <footer>
+            <cite>L'inconnu qui a fait ce site</cite>
+          </footer>
+        </blockquote>
+      </section>
+
+
+      <section class="limit center space2" id="about">
+        <h2>A propos de nous</h2>
+        <article class="article-gradient-light" style="font-size: 0.8rem;">
+          <p>
+            ÉTAT.io est un projet qui s'adresse à tous les humains de la planète terre qui souhaitent simplifier et optimiser leur pays.
+          </p>
+          <p>
+            Une équipe pluridisciplinaire et bénévole, surnommée les <em data-tooltip="Équipe de superhéros, discrets et terriblement efficaces derrière leur ordinateur">#SlipsJaunes</em>, sera constituée pour réaliser le projet si celui-ci rencontre un succès.
+          </p>
+          <p  style="margin-bottom: 0;">
+            Auteur : David Grelaud, éleveur d'idées.
+          </p>
+        </article>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="container space2">
+        <section>
+          <img class="logo-etat" src="/img/logo-white.svg" alt="logo etat" style="height: 35px;">
+          <nav class="links">
+            <ul>
+              <li>
+                <strong>A propos</strong>
+              </li>
+              <li>
+                <a class="secondary" href="#about">Notre mission</a>
+              </li>
+              <li>
+                <a class="secondary" href="#philo">Philosophie</a>
+              </li>
+              <li>
+                <a class="secondary" href="/mentions-legales.html" target="_blank">Mentions légales</a>
+              </li>
+              <li>
+                <a class="secondary" href="/img/kit-presse.zip" target="_blank">kit presse</a>
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <strong>Solutions</strong>
+              </li>
+              <li>
+                <a class="secondary" href="#simulator-section">Simulateur</a>
+              </li>
+              <li>
+                <a class="secondary" href="#features">Avantages</a>
+              </li>
+              <li>
+                <a class="secondary" href="#testimonial">Témoignages</a>
+              </li>
+              <li>
+                <a class="secondary" href="#faq">FAQ</a>
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <strong>Communauté</strong>
+              </li>
+              <li>
+                <a rel="noopener noreferrer" class="secondary" href="https://github.com/etat-io/website/issues" target="_blank">Issues</a>
+              </li>
+              <li>
+                <a rel="noopener noreferrer" class="secondary" href="https://discord.com/channels/1308002357275136000/1308002357988298824" target="_blank">Discussions</a>
+              </li>
+              <li>
+                <a rel="noopener noreferrer" class="secondary" href="https://github.com/etat-io/website/discussions" target="_blank">Help</a>
+              </li>
+            </ul>
+          </nav>
+          <p class="build-info">Imaginé par
+            <!-- -->
+            <a rel="noopener noreferrer" class="secondary" href="https://github.com/dgrelaud" target="_blank">David</a>
+            <!-- -->avec l'aide de
+            <!-- -->
+            <a rel="noopener noreferrer" class="secondary" href="https://github.com/etat-io/website/graphs/contributors" target="_blank">contributeurs</a>.
+          </p>
+          <ul class="resources">
+            <li>
+              <a rel="noopener noreferrer" class="contrast" title="GitHub" href="https://github.com/etat-io/website" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24.25" viewBox="0 0 496 512" class="icon-github">
+                  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a rel="noopener noreferrer" class="contrast" title="Twitter" href="https://x.com/etat_io" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 512 512" class="icon-x">
+                  <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"></path>
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a rel="noopener noreferrer" class="contrast" title="Discord" href="https://discord.com/channels/1308002357275136000/1308002357988298824" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36"><path fill="#fff" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <p><code>v1.0.0</code>
+            <!-- -->
+            <a rel="noopener noreferrer" class="secondary" href="https://github.com/etat-io/website/blob/main/LICENSE.md" target="_blank">CC BY-SA 4.0</a>.
+          </p>
+        </section>
+      </div>
+    </footer>
+
+
+
+    <script type="text/javascript">
+      // DATA
+      const taxEtatRentable = 100 * totalDepenseFrance / totalTransaction;
+      const maxTax = taxEtatRentable * 2;
+      const minTax = 0;
+
+      // Fireworks
+      const fireworks = document.getElementById('fireworks');
+      let fireworksTimeout = null;
+      function startFireworks () {
+        fireworks.style.display = 'block';
+        clearTimeout(fireworksTimeout);
+        fireworksTimeout = setTimeout(() => {
+          fireworks.style.display = 'none';
+        }, 3000);
+      }
+      function debounce (fn, ...args) {
+        clearTimeout(fn.debounceTimer)
+        fn.debounceTimer = setTimeout(fn, 10, ...args);
+      }
+      const taxNodes = document.querySelectorAll('.tu');
+      const simulatorResult = document.getElementById('simulator-result');
+      function updateTax (newTax, onlySimulator = false) {
+        const _recette = totalTransaction * newTax / 100;
+
+        simulatorResult.innerText = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'EUR', maximumSignificantDigits: 3 }).format(_recette) + ' Milliards'
+        if (onlySimulator === true) {
+          return;
+        }
+        taxNodes.forEach((e) => {
+          switch (e.nodeName) {
+            case 'SPAN':
+              e.innerText = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 2 }).format(newTax);
+              break;
+            case 'INPUT':
+              e.value = newTax.toFixed(2);
+              break;
+          }
+        })
+      }
+
+      // Init and listen tax Slider
+      const universalTaxSlider = document.getElementById('tu');
+      universalTaxSlider.min = minTax;
+      universalTaxSlider.max = maxTax;
+      universalTaxSlider.value = maxTax;
+      updateTax(taxEtatRentable);
+      universalTaxSlider.addEventListener('input', (event) => {
+        const _tax = parseFloat(maxTax) - parseFloat(event.target.value); /* read and inverse range */
+        debounce(updateTax, _tax);
+      });
+
+      function animateSlider(duration) {
+        const startValue = maxTax;
+        const endValue = taxEtatRentable;
+        const startTime = Date.now();
+        function updateSlider() {
+          const elapsedTime = Date.now() - startTime;
+          const progress = Math.min(elapsedTime / duration, 1); // Calculate progress as a fraction
+          const value = startValue - progress * (startValue - endValue);
+          universalTaxSlider.value = value; // Update slider value
+          if (progress < 1) {
+            const _tax = parseFloat(maxTax) - parseFloat(value); /* read and inverse range */
+            updateTax(_tax, true);
+            setTimeout(updateSlider, 10);
+          }
+          else {
+            startFireworks();
+          }
+        }
+        requestAnimationFrame(updateSlider);
+      }
+
+      let simulatorRevealed = false;
+      // define an observer instance
+      const observer = new IntersectionObserver(onIntersection, {
+        root: null,
+        threshold: 0.8
+      })
+      // callback is called on intersection change
+      function onIntersection(entries, opts) {
+        for (const entry of entries) {
+          if (entry.isIntersecting === true) {
+            if (simulatorRevealed === false) {
+              animateSlider(800);
+            }
+            simulatorRevealed = true;
+          }
+        }
+      }
+      // Use the observer to observe an element
+      const _simulatorDiv = document.getElementById('simulator-section');
+      observer.observe( _simulatorDiv )
+    </script>
+    <!-- 100% privacy-first analytics -->
+    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
+  </body>
+</html>
